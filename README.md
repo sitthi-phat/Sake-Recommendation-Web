@@ -1,16 +1,56 @@
-Key Features
-Omni-Channel Login: Seamless authentication via LINE, Google, Apple, and Email Magic Links.
+# Sake Recommendation Web
 
-Fast Taste Profiling: Intuitive slider interface for:
+A web application designed to recommend the perfect Sake for your palate.
 
-Light vs. Rich
+## MVP Scope & Status
 
-Dry vs. Sweet
+The following is the status of the Minimum Viable Product (MVP) features:
 
-Clean vs. Funky
+- [x] **Login**: Successfully implemented (Line, Google, Facebook). *Note: Apple login is pending credentials.*
+- [ ] **Taste Input**: Not available.
+- [x] **Recommendation**: Available via API (currently using mock data for personalization).
+- [ ] **Food Pairing**: Not available.
+- [ ] **Learning Snippets**: Not available.
+- [ ] **Table Mode**: Not available.
+- [ ] **Feedback**: Not available.
 
-Smart Recommendations: Suggests 1-3 sakes with detailed pairings (Temperature/Food) and taste visualizations.
+## Current Features
 
-Group/Table Mode: QR-based session sharing to aggregate group preferences and resolve "taste conflicts" for bottle selection.
+### 1. Authentication
+- Secure login using **NextAuth.js**.
+- Supports **Google**, **Facebook**, and **Line**.
+- **Guest Mode** for users who want to browse without creating an account.
+- **Logout** functionality integrated.
 
-AI Feedback Loop: Continuous learning from "Like/Dislike" feedback to refine the recommendation engine.
+### 2. Product Discovery
+- **Personalized Recommendations**: Logged-in users see recommendations tailored to their ID (simulated).
+- **Top Recommendations**: Guest users see a curated list of popular sakes.
+- **Premium UI**: Glassmorphism design with smooth animations.
+
+## How to Run
+
+### Prerequisites
+- Node.js installed.
+- `.env.local` file configured in `/client` (see `.env.local.template`).
+
+### Steps
+1.  **Start the Backend**:
+    ```bash
+    cd server
+    npm start
+    # Running on http://localhost:4000
+    ```
+
+2.  **Start the Frontend**:
+    ```bash
+    cd client
+    npm run dev
+    # Running on http://localhost:3000
+    ```
+
+## Testing
+
+Unit tests are available for both Client and Server.
+
+- **Backend**: `cd server && npm test`
+- **Frontend**: `cd client && npm test`
