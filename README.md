@@ -14,5 +14,3 @@ Smart Recommendations: Suggests 1-3 sakes with detailed pairings (Temperature/Fo
 Group/Table Mode: QR-based session sharing to aggregate group preferences and resolve "taste conflicts" for bottle selection.
 
 AI Feedback Loop: Continuous learning from "Like/Dislike" feedback to refine the recommendation engine.
-
-TBC
