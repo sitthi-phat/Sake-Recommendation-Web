@@ -5,15 +5,66 @@ import { motion } from 'framer-motion';
 import { LogIn, User, CircleUserRound } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user) {
+      // Check if user is registered
+      const checkRegistration = async () => {
+        try {
+          // @ts-ignore
+          const channelUserId = session.user.id;
+          // @ts-ignore
+          const registeredChannel = session.user.provider;
+
+          if (!channelUserId || !registeredChannel) {
+            // Should not happen if auth works, but safe fallback
+            router.push('/products');
+            return;
+          }
+
+          // Capitalize first letter to match Enum in DB path
+          const providerEnum = registeredChannel.charAt(0).toUpperCase() + registeredChannel.slice(1);
+
+          const res = await fetch('/api/proxy/auth/check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              channelUserId,
+              registeredChannel: providerEnum
+            }),
+          });
+
+          const data = await res.json();
+          if (data.exists) {
+            router.push('/products');
+          } else {
+            router.push('/register');
+          }
+        } catch (error) {
+          console.error('Check registration failed', error);
+          // Fallback to products or stay here? 
+          // Better to let them through to products or show error? 
+          // MVP rule: Fail safe to products? No, that breaks the "New User" flow requirement.
+          // Let's go to register if check fails, or maybe just products.
+          router.push('/products');
+        }
+      };
+
+      checkRegistration();
+    }
+  }, [session, status, router]);
 
   const handleLogin = (provider: string) => {
     // Real OAuth Login
     const providerId = provider.toLowerCase();
-    signIn(providerId, { callbackUrl: '/products' });
+    // Callback to home page so we can run the check logic
+    signIn(providerId, { callbackUrl: '/' });
   };
 
   const socialButtons = [

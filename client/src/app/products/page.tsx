@@ -51,7 +51,7 @@ function ProductsContent() {
                 }
 
                 // Note: For local dev, ensure the server is running on port 4000
-                const res = await fetch(`http://localhost:4000/api/products${query}`);
+                const res = await fetch(`/api/proxy/products${query}`);
                 const data = await res.json();
 
                 setProducts(data.products);

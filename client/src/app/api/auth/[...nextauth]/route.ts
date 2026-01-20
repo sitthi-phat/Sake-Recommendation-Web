@@ -37,12 +37,17 @@ export const authOptions: AuthOptions = {
             if (session?.user) {
                 // @ts-ignore
                 session.user.id = token.sub;
+                // @ts-ignore
+                session.user.provider = token.provider;
             }
             return session;
         },
-        async jwt({ token, user }) {
+        async jwt({ token, user, account }) {
             if (user) {
                 token.sub = user.id;
+            }
+            if (account) {
+                token.provider = account.provider;
             }
             return token;
         }

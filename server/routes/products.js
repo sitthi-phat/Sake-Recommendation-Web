@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../config/db');
 
 // Mock Data
 const DEFAULT_SAKE_LIST = [
@@ -14,18 +15,38 @@ const PERSONALIZED_SAKE_LIST = [
     { id: 1, name: 'Dassai 23', type: 'Junmai Daiginjo', description: 'A classic choice you usually like.', image: '/placeholder-sake.png', price: '$$$' },
 ];
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     const { customerId, guest } = req.query;
 
     console.log('GET /products', req.query);
 
     if (customerId) {
-        // Simulate personalized logic
-        return res.json({
-            mode: 'personalized',
-            message: `Recommendations for Customer ID: ${customerId}`,
-            products: PERSONALIZED_SAKE_LIST
-        });
+        try {
+            const [rows] = await db.execute(
+                'SELECT NickName FROM customer_master WHERE ChannelUserID = ?',
+                [customerId]
+            );
+
+            let displayName = customerId;
+            if (rows.length > 0) {
+                displayName = rows[0].NickName;
+            }
+
+            // Simulate personalized logic
+            return res.json({
+                mode: 'personalized',
+                message: `Recommend For ${displayName}`,
+                products: PERSONALIZED_SAKE_LIST
+            });
+        } catch (err) {
+            console.error('Error fetching nickname:', err);
+            // Fallback
+            return res.json({
+                mode: 'personalized',
+                message: `Recommendations for Customer ID: ${customerId}`,
+                products: PERSONALIZED_SAKE_LIST
+            });
+        }
     }
 
     // Default / Guest mode

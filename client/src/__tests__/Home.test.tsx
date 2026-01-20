@@ -4,6 +4,7 @@ import Home from '../app/page';
 // Mock next-auth
 jest.mock('next-auth/react', () => ({
     signIn: jest.fn(),
+    useSession: jest.fn(() => ({ data: null, status: 'unauthenticated' })),
 }));
 
 // Mock next/navigation
@@ -35,6 +36,6 @@ describe('Home Page (Login)', () => {
         render(<Home />);
 
         fireEvent.click(screen.getByText('Continue with Google'));
-        expect(signIn).toHaveBeenCalledWith('google', { callbackUrl: '/products' });
+        expect(signIn).toHaveBeenCalledWith('google', { callbackUrl: '/' });
     });
 });
