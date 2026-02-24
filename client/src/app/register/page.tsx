@@ -24,8 +24,8 @@ export default function RegisterPage() {
         if (status === 'unauthenticated') {
             router.push('/');
         } else if (session?.user?.email) {
-            setFormData(prev => ({ ...prev, email: session.user.email || '' }));
-            if (session.user.name) {
+            setFormData(prev => ({ ...prev, email: session?.user?.email || '' }));
+            if (session?.user?.name) {
                 const names = session.user.name.split(' ');
                 setFormData(prev => ({
                     ...prev,

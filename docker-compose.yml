@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_URL=http://server:5000
+      - API_SECRET=${API_SECRET}
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+    depends_on:
+      - server
+    networks:
+      - sake_network
+
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - API_SECRET=${API_SECRET}
+    depends_on:
+      - db
+    networks:
+      - sake_network
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./server/database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - sake_network
+
+  openclaw:
+    build:
+      context: .
+      dockerfile: openclaw.Dockerfile
+    user: root
+    command: gateway --port 18789 --bind lan --allow-unconfigured --token ${OPENCLAW_GATEWAY_TOKEN}
+    ports:
+      - "18789:18789"
+    volumes:
+      - openclaw_data:/home/node/.openclaw
+      - ./:/home/node/.openclaw/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - OPENCLAW_GATEWAY_MODE=local
+      - SEARCH_PROVIDER=gemini
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - HOME=/home/node
+      - OPENCLAW_BROWSER_PROFILE=puppeteer
+      - DEFAULT_BROWSER_PROFILE=puppeteer
+    networks:
+      - sake_network
+
+volumes:
+  db_data:
+  openclaw_data:
+
+
+networks:
+  sake_network:
+    driver: bridge

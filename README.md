@@ -48,6 +48,22 @@ The following is the status of the Minimum Viable Product (MVP) features:
     # Running on http://localhost:3000
     ```
 
+### Docker (Recommended)
+You can run the full stack (Client, Server, Database, AI Assistant) with a single command:
+
+1.  **Configure Environment**:
+    - Ensure `.env` exists in the root directory (based on `.env`).
+
+2.  **Start Services**:
+    ```bash
+    docker-compose up -d --build
+    ```
+
+3.  **Access Services**:
+    - **Web App**: [http://localhost:3000](http://localhost:3000)
+    - **OpenClaw Dashboard**: [http://localhost:18789](http://localhost:18789) (See `.env` for token)
+    - **Database**: Port `3306` (`user`/`password`)
+
 ## Testing
 
 Unit tests are available for both Client and Server.
